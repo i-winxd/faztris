@@ -522,7 +522,7 @@ if (locked)
         if (base_attack > 0)
             final_attack = floor(base_attack * (1 + (0.5 * Combo)));
         else if (Combo >= 2 && lines_cleared > 0)
-            final_attack = floor(2 * ln(1 + (1.25 * Combo)));
+            final_attack = floor(base_attack * ln(1 + (1.25 * Combo)));
         
         if (lines_cleared > 0)
         {
