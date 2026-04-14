@@ -1,0 +1,43 @@
+{
+  "Name": "oMinigame_Stacker",
+  "Sprite": null,
+  "Visible": true,
+  "Solid": false,
+  "Depth": 0,
+  "Persistent": false,
+  "Parent": "oMinigameParent",
+  "TextureMask": null,
+  "UsesPhysics": false,
+  "IsSensor": false,
+  "CollisionShape": 1,
+  "Density": 0.5,
+  "Restitution": 0.1,
+  "Group": 0,
+  "LinearDamping": 0.1,
+  "AngularDamping": 0.1,
+  "Friction": 0.2,
+  "Awake": true,
+  "Kinematic": false,
+  "Events": [
+    {
+      "EventType": "Create",
+      "EventSubtype": 0,
+      "CodeName": "gml_Object_oMinigame_Stacker_Create_0"
+    },
+    {
+      "EventType": "Destroy",
+      "EventSubtype": 0,
+      "CodeName": "gml_Object_oMinigame_Stacker_Destroy_0"
+    },
+    {
+      "EventType": "Step",
+      "EventSubtype": 0,
+      "CodeName": "gml_Object_oMinigame_Stacker_Step_0"
+    },
+    {
+      "EventType": "Draw",
+      "EventSubtype": 0,
+      "CodeName": "gml_Object_oMinigame_Stacker_Draw_0"
+    }
+  ]
+}

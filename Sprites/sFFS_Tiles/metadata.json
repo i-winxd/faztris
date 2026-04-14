@@ -1,0 +1,17 @@
+{
+  "Name": "sFFS_Tiles",
+  "Width": 16,
+  "Height": 16,
+  "MarginLeft": 0,
+  "MarginRight": 15,
+  "MarginBottom": 15,
+  "MarginTop": 0,
+  "BBoxMode": 0,
+  "SepMasks": 0,
+  "OriginX": 0,
+  "OriginY": 0,
+  "IsSpecialType": true,
+  "SVersion": 3,
+  "GMS2PlaybackSpeed": 30.0,
+  "GMS2PlaybackSpeedType": 0
+}
