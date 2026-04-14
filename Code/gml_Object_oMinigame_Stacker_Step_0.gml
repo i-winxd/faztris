@@ -35,7 +35,7 @@ KeyHardDrop = arr_safe_(global.Settings[0], 30, ord("I"));
 KeyCCW =      arr_safe_(global.Settings[0], 26, vk_left);
 KeyCW =       arr_safe_(global.Settings[0], 27, vk_right);
 Key180Up =    arr_safe_(global.Settings[0], 28, vk_up);
-Key180Down =  arr_safe_(global.Settings[0], 12, vk_down);
+// Key180Down =  arr_safe_(global.Settings[0], 12, vk_down);
 KeyHold =     arr_safe_(global.Settings[0], 29, ord("B"));
 ARR = arr_safe_(global.Settings[3], 4, 2); 
 DAS = arr_safe_(global.Settings[3], 5, 10);
@@ -55,7 +55,7 @@ if (PREVENT_ACCIDENTAL_HARD_DROPS && HardDropLockoutTimer > 0)
 
 var in_ccw = keyboard_check_pressed(KeyCCW);
 var in_cw = keyboard_check_pressed(KeyCW);
-var in_180 = keyboard_check_pressed(Key180Up) || keyboard_check_pressed(Key180Down);
+var in_180 = keyboard_check_pressed(Key180Up);
 var in_hold = keyboard_check_pressed(KeyHold);
 var moved_horizontally = false;
 var kicked = false;
