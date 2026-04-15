@@ -533,9 +533,11 @@ if (locked)
             base_attack = 7;
         }
         
-        if (is_all_clear) base_attack += 14;
+        if (is_all_clear) {
+            B2B += 2;
+        }
         
-        var is_difficult = (eff_lines == 4 || is_spin);
+        var is_difficult = (eff_lines == 4 || is_spin || is_all_clear);
         
         
         var action_score = 0;
@@ -573,8 +575,13 @@ if (locked)
         {
             b2b_mult = 1.5;
         }
+
         
-        var earned_points = action_score * b2b_mult * Level;
+        var earned_points = (action_score * b2b_mult) * Level;
+
+
+
+
         
         if (is_all_clear)
         {
@@ -621,6 +628,14 @@ if (locked)
         else if (Combo >= 2 && eff_lines > 0)
             final_attack = floor(base_attack * ln(1 + (1.25 * Combo)));
         
+
+        var all_clear_bonus = 0;
+        if(is_all_clear) {
+            all_clear_bonus = 15;
+        }
+        final_attack += all_clear_bonus;
+
+
         if (eff_lines > 0)
         {
             Combo++;

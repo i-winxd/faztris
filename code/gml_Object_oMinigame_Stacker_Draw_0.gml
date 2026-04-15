@@ -89,6 +89,7 @@ if (!Dead && ActivePiece != -1)
                 if (ghost_draw_y >= BoardY && floor(GhostY) != floor(ActiveY))
                 {
                     draw_rectangle_color(draw_x, ghost_draw_y, draw_x + 7, ghost_draw_y + 7, c_black, c_black, c_black, c_black, false);
+                    // for some reason, mangle seems to overlay. This is weird. I have no idea how to fix this.
                     draw_sprite_ext(sFFS_TilesSmall, 0, draw_x, ghost_draw_y, 1, 1, 0, PieceColors[cell], 0.8);
                 }
                 
