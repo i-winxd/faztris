@@ -630,11 +630,22 @@ if (locked)
         
         var final_attack = 0;
         
+        var combo_multiplier = Combo;
 
-        if (base_attack > 0)
-            final_attack = floor(base_attack * (1 + (0.5 * Combo)));
-        else if (Combo >= 2 && eff_lines > 0)
-            final_attack = floor(ln(1 + (1.25 * Combo)));
+        var is_full_spin = is_spin && !is_mini;
+        if (base_attack > 0) {
+            if(!is_full_spin && eff_lines == 1) {
+                final_attack = floor(base_attack * ln(1 + max(2, min(combo_multiplier, 3)) + (1.25 * combo_multiplier)));
+            } else {
+                final_attack = floor(base_attack * (1 + (0.5 * combo_multiplier)));
+            }
+        }
+        else if (Combo >= 2 && eff_lines > 0) {
+            final_attack = floor(ln(1 + (1.25 * combo_multiplier)));
+        }
+
+        // the combo multiplier is severely nerfed if
+        // the lines cleared is 1 and is not a spin
         
 
         var all_clear_bonus = 0;
