@@ -2,8 +2,47 @@ if (room == Office)
 {
     if (global.MonitorSystem != "Games" || !global.CamUp)
         Paused = true;
-    else
-        Paused = false;
+}
+
+
+if (Paused && (
+    mouse_check_button_pressed(KeyLeft)     ||
+    mouse_check_button_pressed(KeyRight)    ||
+    mouse_check_button_pressed(KeySoftDrop) ||
+    mouse_check_button_pressed(KeyHardDrop) ||
+    mouse_check_button_pressed(KeyCCW)      ||
+    mouse_check_button_pressed(KeyCW)       ||
+    mouse_check_button_pressed(Key180Up)    ||
+    mouse_check_button_pressed(KeyHold) ||
+    mouse_check_button_pressed(mb_left) || mouse_check_button_pressed(mb_right)) && mouse_in_minigame_window())
+    Paused = false;
+
+
+
+if (keyboard_check_pressed(vk_space))
+{
+    Paused = !Paused;
+}
+
+
+if (Paused)
+{
+    exit;
+}
+
+
+
+
+
+// levels_to_mult_2: at this level, token gain is effectively multiplied. Increase
+// to nerf token mult from level up.
+
+var levels_to_mult_2 = 10;
+if (!variable_instance_exists(id, "LinesToLevelBase"))
+{
+    LinesToLevelBase = 8;   // must clear this many lines to level up
+    LinesToLevelScale = 2;  // and this much more per additional level, making it quadratic
+    LevelLinesRemaining = LinesToLevelBase;
 }
 
 
@@ -17,7 +56,7 @@ if (Dead)
     exit;
 }
 
-
+// option mimicing Tetrio
 var PREVENT_ACCIDENTAL_HARD_DROPS = true;
 var HARD_DROP_PREVENT_WINDOW = 6;
 
@@ -35,13 +74,11 @@ KeyHardDrop = arr_safe_(global.Settings[0], 30, ord("I"));
 KeyCCW =      arr_safe_(global.Settings[0], 26, vk_left);
 KeyCW =       arr_safe_(global.Settings[0], 27, vk_right);
 Key180Up =    arr_safe_(global.Settings[0], 28, vk_up);
-// Key180Down =  arr_safe_(global.Settings[0], 12, vk_down);
 KeyHold =     arr_safe_(global.Settings[0], 29, ord("B"));
 ARR = arr_safe_(global.Settings[3], 4, 2); 
 DAS = arr_safe_(global.Settings[3], 5, 10);
 DCD = arr_safe_(global.Settings[3], 6, 2); 
 SDF = max(arr_safe_(global.Settings[3], 7, 26), 1);
-
 
 var in_left = keyboard_check(KeyLeft);
 var in_right = keyboard_check(KeyRight);
@@ -96,8 +133,8 @@ if (actual_rot_change != 0 && ActivePiece != 4)
 {
     var new_rot = (ActiveRot + actual_rot_change) % 4;
     
-    for (var test = 0; test < 5; test++)
-    {
+    var max_tests = (actual_rot_change == 2) ? 6 : 5;
+    for (var test = 0; test < max_tests; test++) {
         var kick = get_kick(ActivePiece, ActiveRot, new_rot, test);
         var kx = kick[0];
         var ky = kick[1];
@@ -123,7 +160,10 @@ if (actual_rot_change != 0 && ActivePiece != 4)
 
 var dir = in_right - in_left;
 
-if (dir != 0)
+if (DcdTimer > 0) {
+    DcdTimer--;
+}
+else if (dir != 0)
 {
     if (DasDir != dir)
     {
@@ -213,14 +253,31 @@ if (!check_collision(ActiveX, ActiveY + remainder, ActiveRot))
 else
     ActiveY = floor(ActiveY);
 
+
+var actual_y_drop = floor(ActiveY) - prev_y;
+if (in_sd && actual_y_drop > 0)
+{
+    Score += actual_y_drop; 
+}
+
 if (floor(ActiveY) > prev_y)
 {
-    LockTimer = 0;
-    LockResets = 0;
+    
     LastMoveRotate = false;
     SpinKicked = false;
     IsImmobile = false;
 }
+
+
+if (floor(ActiveY) > LowestY)
+{
+    LowestY = floor(ActiveY);
+    LockTimer = 0;
+    LockResets = 0;
+}
+
+
+
 
 var locked = false;
 
@@ -236,6 +293,7 @@ if (in_hd)
         LastMoveRotate = false;
         SpinKicked = false;
         IsImmobile = false;
+        Score += (hd_dist * 2); 
     }
     
     locked = true;
@@ -314,9 +372,9 @@ if (locked)
             var ty = floor(ActiveY);
             var tl = tx < 0 || ty < 0 || Grid[(ty * BoardWidth) + tx] != 0;
             var tr = (tx + 2) >= BoardWidth || ty < 0 || Grid[(ty * BoardWidth) + tx + 2] != 0;
-            var bl = tx < 0 || (ty + 2) >= BoardHeight || Grid[((ty + 2) * BoardWidth) + tx] != 0;
-            var br = (tx + 2) >= BoardWidth || (ty + 2) >= BoardHeight || Grid[((ty + 2) * BoardWidth) + tx + 2] != 0;
-            
+            var bl = tx < 0 || (ty + 2) < 0 || (ty + 2) >= BoardHeight || Grid[((ty + 2) * BoardWidth) + tx] != 0;
+            var br = (tx + 2) >= BoardWidth || (ty + 2) < 0 || (ty + 2) >= BoardHeight || Grid[((ty + 2) * BoardWidth) + tx + 2] != 0;
+
             if (ActiveRot == 0)
             {
                 front_filled = tl + tr;
@@ -402,7 +460,10 @@ if (locked)
             AllClearTimer = 120;
     }
     
-    if (lines_cleared > 0 || is_spin)
+    
+    var eff_lines = min(lines_cleared, 4);
+    
+    if (eff_lines > 0 || is_spin)
     {
         var clear_str = "";
         var base_attack = 0;
@@ -427,119 +488,164 @@ if (locked)
         {
             var s_type = "S";
             
-            if (lines_cleared == 2)
+            if (eff_lines == 2)
                 s_type = "D";
-            
-            if (lines_cleared == 3)
+            if (eff_lines == 3)
                 s_type = "T";
-            
-            if (lines_cleared == 4)
+            if (eff_lines == 4)
                 s_type = "Q";
             
-            if (lines_cleared == 0)
+            if (eff_lines == 0)
                 clear_str = p_name + "S";
-            else
-                clear_str = p_name + "S" + s_type;
+            else clear_str = p_name + "S" + s_type;
             
-            if (is_mini)
-                clear_str += "M";
+            if (is_mini) clear_str += "M";
             
             if (!is_mini)
             {
-                if (lines_cleared == 1)
-                    base_attack = 4;
-                else if (lines_cleared == 2)
-                    base_attack = 8;
-                else if (lines_cleared == 3)
-                    base_attack = 12;
+                if (eff_lines == 1) base_attack = 4;
+                else if (eff_lines == 2) base_attack = 8;
+                else if (eff_lines == 3) base_attack = 12;
             }
-            else if (lines_cleared == 1)
-            {
-                base_attack = 1;
-            }
-            else if (lines_cleared == 2)
-            {
-                base_attack = 2;
-            }
-            else if (lines_cleared == 3)
-            {
-                base_attack = 4;
-            }
-            else if (lines_cleared == 4)
-            {
-                base_attack = 7;
-            }
+            else if (eff_lines == 1) base_attack = 1;
+            else if (eff_lines == 2) base_attack = 2;
+            else if (eff_lines == 3) base_attack = 4;
+            else if (eff_lines == 4) base_attack = 7;
         }
-        else if (lines_cleared == 1)
+        else if (eff_lines == 1)
         {
             clear_str = "SING";
             base_attack = 1;
         }
-        else if (lines_cleared == 2)
+        else if (eff_lines == 2)
         {
             clear_str = "DOUB";
             base_attack = 2;
         }
-        else if (lines_cleared == 3)
+        else if (eff_lines == 3)
         {
             clear_str = "TRIP";
             base_attack = 4;
         }
-        else if (lines_cleared == 4)
+        else if (eff_lines == 4)
         {
             clear_str = "QUAD";
             base_attack = 7;
         }
         
-        if (is_all_clear)
-            base_attack += 14;
+        if (is_all_clear) base_attack += 14;
         
-        var is_difficult = lines_cleared == 4 || is_spin;
+        var is_difficult = (eff_lines == 4 || is_spin);
         
-        if (is_difficult && lines_cleared > 0)
+        
+        var action_score = 0;
+        
+        if (is_spin)
         {
-            B2B++;
-            var b2b_bonus = 0;
+            if (is_mini)
+            {
+                if (eff_lines == 0) action_score = 100;
+                else if (eff_lines == 1) action_score = 200;
+                else if (eff_lines == 2) action_score = 400;
+                else if (eff_lines == 3) action_score = 800;
+                else if (eff_lines == 4) action_score = 1600;
+            }
+            else
+            {
+                if (eff_lines == 0) action_score = 400;
+                else if (eff_lines == 1) action_score = 800;
+                else if (eff_lines == 2) action_score = 1200;
+                else if (eff_lines == 3) action_score = 1600;
+                else if (eff_lines == 4) action_score = 2600;
+            }
+        }
+        else
+        {
+            if (eff_lines == 1) action_score = 100;
+            else if (eff_lines == 2) action_score = 300;
+            else if (eff_lines == 3) action_score = 500;
+            else if (eff_lines == 4) action_score = 800;
+        }
+        
+        
+        var b2b_mult = 1.0;
+        if (is_difficult && eff_lines > 0 && B2B > 0)
+        {
+            b2b_mult = 1.5;
+        }
+        
+        var earned_points = action_score * b2b_mult * Level;
+        
+        if (is_all_clear)
+        {
+            earned_points += (3500 * Level);
+        }
+        
+        if (eff_lines > 0)
+        {
             
-            if (B2B >= 2 && B2B <= 3)
-                b2b_bonus = 2;
-            else if (B2B >= 4 && B2B <= 8)
-                b2b_bonus = 4;
-            else if (B2B >= 9 && B2B <= 24)
-                b2b_bonus = 6;
-            else if (B2B >= 25)
-                b2b_bonus = 8;
+            earned_points += (50 * Combo * Level);
+        }
+        
+        Score += earned_points;
+        
+
+        
+        if (is_difficult && eff_lines > 0)
+        {
+            
+            var b2b_bonus = 0;
+            B2B++;
+            if (B2B >= 2 && B2B <= 3) b2b_bonus = 2;            
+            else if (B2B >= 4 && B2B <= 8) b2b_bonus = 4;       
+            else if (B2B >= 9 && B2B <= 24) b2b_bonus = 6;      
+            else if (B2B >= 25 && B2B <= 67) b2b_bonus = 8;     
+            else if (B2B >= 68 && B2B <= 185) b2b_bonus = 10;   
+            else if (B2B >= 186 && B2B <= 504) b2b_bonus = 12;  
+            else if (B2B >= 505 && B2B <= 1370) b2b_bonus = 14; 
+            else if (B2B >= 1371) b2b_bonus = 16;               
             
             base_attack += b2b_bonus;
+            
         }
-        else if (lines_cleared > 0)
+        else if (eff_lines > 0)
         {
             B2B = 0;
         }
+        
         
         var final_attack = 0;
         
         if (base_attack > 0)
             final_attack = floor(base_attack * (1 + (0.5 * Combo)));
-        else if (Combo >= 2 && lines_cleared > 0)
+        else if (Combo >= 2 && eff_lines > 0)
             final_attack = floor(base_attack * ln(1 + (1.25 * Combo)));
         
-        if (lines_cleared > 0)
+        if (eff_lines > 0)
         {
             Combo++;
             ClearText = clear_str;
             ClearAttack = final_attack;
             ClearTextTimer = 60;
-            LinesCleared += lines_cleared;
-            Level = floor(LinesCleared / 8) + 1;
-            Score += (final_attack * 100);
             
-            if (lines_cleared == 4)
-                Score += 400;
+            LinesCleared += lines_cleared; 
+            
+            
+            LevelLinesRemaining -= lines_cleared;
+            
+            while (LevelLinesRemaining <= 0 && Level < 20)
+            {
+                Level++;
+                LinesToLevelBase += LinesToLevelScale;
+                LevelLinesRemaining += LinesToLevelBase;
+            }
+            
             
             var snd_place = audio_play_sound(sfxBitPlace, 4, false);
             audio_sound_gain(snd_place, 0.4, 0);
-            var token_mult = 1 + ((Level - 1) / 7);
+            
+            
+            var token_mult = 1 + ((Level - 1) / levels_to_mult_2);
             TokenFraction += (final_attack * token_mult);
             var tokens_to_add = floor(TokenFraction);
             
@@ -553,7 +659,7 @@ if (locked)
             if (is_difficult)
                 audio_play_sound(sfxBitBoost, 8, false);
         }
-        else if (is_spin && lines_cleared == 0)
+        else if (is_spin && eff_lines == 0)
         {
             ClearText = clear_str;
             ClearAttack = 0;
@@ -574,3 +680,5 @@ if (locked)
     if (Score > global.HiScores[11])
         global.HiScores[11] = Score;
 }
+
+

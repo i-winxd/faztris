@@ -200,4 +200,16 @@ if (AllClearTimer > 0)
     draw_set_valign(fa_top);
 }
 
+if (Paused)
+{
+    var TexC = 3354368; // Dark background color used in ChicasFeedingFrenzy
+    
+    draw_set_halign(fa_center);
+    draw_rectangle_color(0, 64, 160, 80, TexC, TexC, TexC, TexC, false);
+    draw_text_color(80, 69, "PAUSED", TexCLight, TexCLight, TexCLight, TexCLight, 1);
+    draw_set_halign(fa_left); // Reset alignment so other text isn't messed up next frame
+}
+
+
+
 surface_reset_target();

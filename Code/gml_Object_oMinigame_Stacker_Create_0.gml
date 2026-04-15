@@ -2,7 +2,13 @@ Initialize = true;
 Paused = false;
 Dead = false;
 DeathTimer = 0;
+DcdTimer = 0;
+LowestY = 0;
 
+
+// the higher this is, the lower pieces spawn, if you do not
+// want them out of bounds.
+YOffset_Glob = 0;
 
 function arr_safe_(arr, index, fallback)
 {
@@ -19,12 +25,13 @@ KeyHardDrop = arr_safe_(global.Settings[0], 30, ord("I"));
 KeyCCW =      arr_safe_(global.Settings[0], 26, vk_left);
 KeyCW =       arr_safe_(global.Settings[0], 27, vk_right);
 Key180Up =    arr_safe_(global.Settings[0], 28, vk_up);
-// Key180Down =  arr_safe_(global.Settings[0], 12, vk_down);
 KeyHold =     arr_safe_(global.Settings[0], 29, ord("B"));
 ARR = arr_safe_(global.Settings[3], 4, 2); 
 DAS = arr_safe_(global.Settings[3], 5, 10);
 DCD = arr_safe_(global.Settings[3], 6, 2); 
 SDF = arr_safe_(global.Settings[3], 7, 16);
+
+// KeyLeft, KeyRight, KeySoftDrop, KeyHardDrop, KeyCCW, KeyCW, Key180Up, KeyHold
 
 
 
@@ -293,21 +300,48 @@ function get_kick(arg0, arg1, arg2, arg3)
     
     if (abs(arg1 - arg2) == 2)
     {
-        if (arg3 == 1)
-            return [0, -1];
+        if (arg3 == 0) return [0, 0];
         
-        if (arg3 == 2)
-            return [0, -2];
-        
-        if (arg3 == 3)
-            return [0, 1];
-        
-        if (arg3 == 4)
-            return [0, 2];
+        var state = string(arg1) + string(arg2);
+        switch (state)
+        {
+            case "02": 
+                if (arg3 == 1) return [0, -1];
+                if (arg3 == 2) return [1, -1];
+                if (arg3 == 3) return [-1, -1];
+                if (arg3 == 4) return [1, 0];
+                if (arg3 == 5) return [-1, 0];
+                break;
+                
+            case "20": 
+                if (arg3 == 1) return [0, 1];
+                if (arg3 == 2) return [-1, 1];
+                if (arg3 == 3) return [1, 1];
+                if (arg3 == 4) return [-1, 0];
+                if (arg3 == 5) return [1, 0];
+                break;
+                
+            case "13": 
+                if (arg3 == 1) return [1, 0];
+                if (arg3 == 2) return [1, -2];
+                if (arg3 == 3) return [1, -1];
+                if (arg3 == 4) return [0, -2];
+                if (arg3 == 5) return [0, -1];
+                break;
+                
+            case "31": 
+                if (arg3 == 1) return [-1, 0];
+                if (arg3 == 2) return [-1, -2];
+                if (arg3 == 3) return [-1, -1];
+                if (arg3 == 4) return [0, -2];
+                if (arg3 == 5) return [0, -1];
+                break;
+        }
     }
     
     return [0, 0];
 }
+
 
 function generate_bag()
 {
@@ -376,14 +410,24 @@ function check_collision(arg0, arg1, arg2)
 
 function spawn_piece(arg0)
 {
+
+    var y_offset = YOffset_Glob;  // the higher this is, pieces spawn lower.
+
+    DcdTimer = DCD;
     ActivePiece = arg0;
     ActiveRot = 0;
-    ActiveY = 20;
+    ActiveY = 19 + y_offset;
     ActiveX = 3;
     
-    if (arg0 == 4)
+    if (arg0 == 4) // O
+    {
         ActiveX = 4;
-    
+    }
+    else if (arg0 == 1) // I
+    {
+        ActiveY = 18 + y_offset;
+    }
+    LowestY = floor(ActiveY);
     LockTimer = 0;
     LockResets = 0;
     LastMoveRotate = false;
@@ -411,6 +455,7 @@ function reset_game()
     TokenFraction = 0;
     Bag = [];
     HoldPiece = -1;
+    DcdTimer = 0;
     CanHold = true;
     ActivePiece = -1;
     DasTimer = 0;

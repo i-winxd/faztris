@@ -11,7 +11,7 @@ TFScores[UnknownEnum.Value_7] = 360;
 TFScores[UnknownEnum.Value_8] = calc_high_score(5, 20);
 TFScores[UnknownEnum.Value_9] = calc_high_score(50, 200);
 TFScores[UnknownEnum.Value_10] = calc_high_score(20, 100);
-TFScores[11] = calc_high_score(2400, 4200);
+TFScores[11] = calc_high_score(2400, 12800);
 
 if (Active && AI > 0)
 {
