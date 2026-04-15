@@ -5,11 +5,11 @@ This folder currently stores the following scripts.
 I intend to add more in the future, including scripts that let you import stuff.
 
 - ExportCurrentSprite.csx
-  - If you are tabbed to a sprite, exports the current one that works with this project format. Please export it into the "Sprites" folder.
+  - If you are tabbed to a sprite, exports the current one that works with this project format. Please export it into the "sprites" folder.
 - ExportCurrentSound.csx
-  - Ditto but for sound, please export it inmto the "Sounds" folder.
+  - Ditto but for sound, please export it inmto the "sounds" folder.
 - ExportCurrentObjectJSON.csx
-  - Exports data from an object as a JSON file. Please export it into the Objects folder.
+  - Exports data from an object as a JSON file. Please export it into the objects folder.
 
 Remember: current means "tabbed on." The script won't work and will give you a friendly error message if you don't have the correct resource **tab** open. Be careful about using
 the scripts that come with UTMT since their export format may be different.

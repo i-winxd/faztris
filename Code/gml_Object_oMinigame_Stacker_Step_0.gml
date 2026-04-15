@@ -596,14 +596,14 @@ if (locked)
             
             var b2b_bonus = 0;
             B2B++;
-            if (B2B >= 2 && B2B <= 3) b2b_bonus = 2;            
-            else if (B2B >= 4 && B2B <= 8) b2b_bonus = 4;       
-            else if (B2B >= 9 && B2B <= 24) b2b_bonus = 6;      
-            else if (B2B >= 25 && B2B <= 67) b2b_bonus = 8;     
-            else if (B2B >= 68 && B2B <= 185) b2b_bonus = 10;   
-            else if (B2B >= 186 && B2B <= 504) b2b_bonus = 12;  
-            else if (B2B >= 505 && B2B <= 1370) b2b_bonus = 14; 
-            else if (B2B >= 1371) b2b_bonus = 16;               
+            if (B2B >= 2 && B2B <= 3) b2b_bonus = 1;            
+            else if (B2B >= 4 && B2B <= 8) b2b_bonus = 2;       
+            else if (B2B >= 9 && B2B <= 24) b2b_bonus = 3;      
+            else if (B2B >= 25 && B2B <= 67) b2b_bonus = 4;     
+            else if (B2B >= 68 && B2B <= 185) b2b_bonus = 5;   
+            else if (B2B >= 186 && B2B <= 504) b2b_bonus = 6;  
+            else if (B2B >= 505 && B2B <= 1370) b2b_bonus = 7; 
+            else if (B2B >= 1371) b2b_bonus = 8;               
             
             base_attack += b2b_bonus;
             
