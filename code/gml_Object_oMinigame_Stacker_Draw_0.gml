@@ -175,11 +175,9 @@ var score_str = string(Score);
 if (string_length(score_str) >= 5)
 {
     var formatted_score = "";
-    
     for (var i = 1; i <= string_length(score_str); i++)
     {
         formatted_score += string_char_at(score_str, i);
-        
         if ((i % 4) == 0 && i != string_length(score_str))
             formatted_score += "\n";
     }
@@ -202,14 +200,11 @@ if (AllClearTimer > 0)
 
 if (Paused)
 {
-    var TexC = 3354368; // Dark background color used in ChicasFeedingFrenzy
-    
+    var TexC = c_black;
     draw_set_halign(fa_center);
     draw_rectangle_color(0, 64, 160, 80, TexC, TexC, TexC, TexC, false);
     draw_text_color(80, 69, "PAUSED", TexCLight, TexCLight, TexCLight, TexCLight, 1);
-    draw_set_halign(fa_left); // Reset alignment so other text isn't messed up next frame
+    draw_set_halign(fa_left);
 }
-
-
 
 surface_reset_target();
