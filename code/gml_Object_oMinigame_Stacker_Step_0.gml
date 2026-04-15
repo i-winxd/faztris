@@ -1,3 +1,10 @@
+// this value ultimately changes the tokens acquired by this multiplier.
+// for non-whole values, this is rounded using round().
+// if tokens are too OP and this needs to be rebalanced,
+// this is best set to 0.6 to mimic attack in Tetrio's QP2
+var final_attack_multiplier = 1;
+
+
 if (room == Office)
 {
     if (global.MonitorSystem != "Games" || !global.CamUp)
@@ -623,10 +630,11 @@ if (locked)
         
         var final_attack = 0;
         
+
         if (base_attack > 0)
             final_attack = floor(base_attack * (1 + (0.5 * Combo)));
         else if (Combo >= 2 && eff_lines > 0)
-            final_attack = floor(base_attack * ln(1 + (1.25 * Combo)));
+            final_attack = floor(ln(1 + (1.25 * Combo)));
         
 
         var all_clear_bonus = 0;
@@ -634,7 +642,7 @@ if (locked)
             all_clear_bonus = 15;
         }
         final_attack += all_clear_bonus;
-
+        final_attack = round(final_attack * final_attack_multiplier);
 
         if (eff_lines > 0)
         {
