@@ -28,9 +28,6 @@ click away - here's the chance to keep the comments!
 For sprites and objects, look at what's in
 there to understand the format.
 
-## TODOs
-
-Make this thing work in the extras menu
 
 ## Non-technical description
 

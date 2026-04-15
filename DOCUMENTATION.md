@@ -1,6 +1,7 @@
 # Specific Documentation
 
 What does DAS, etc mean? Open Tetrio, go to handling, and hover over them.
+Note: these controls are hardcoded. Really.
 
 Tokens on clear: Horizontal axis for combo
 
