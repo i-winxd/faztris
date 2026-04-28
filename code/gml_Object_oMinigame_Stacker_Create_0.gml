@@ -421,7 +421,7 @@ function spawn_piece(arg0)
     
     if (arg0 == 4) // O
     {
-        ActiveX = 4;
+        ActiveX = 3;
     }
     else if (arg0 == 1) // I
     {
